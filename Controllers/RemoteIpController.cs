@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using AspNetCoreRateLimit;
+using System.Net.Sockets;
+using System.Net;
 
 namespace IPService.Controllers
 {
@@ -7,11 +9,6 @@ namespace IPService.Controllers
     [Route("[controller]")]
     public class RemoteIpController : ControllerBase
     {
-        //private static readonly string[] Summaries = new[]
-        //{
-        //    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        //};
-
         private readonly ILogger<RemoteIpController> _logger;
 
         public RemoteIpController(ILogger<RemoteIpController> logger)
@@ -21,19 +18,24 @@ namespace IPService.Controllers
 
         [HttpGet(Name = "GetRemoteIpAddress")]
         //[RateLimit("EndpointRateLimitPolicy")]
-        public RemoteIp? Get()
+        public RemoteIp? Get(IPAddress? remoteIpAddress)
         {
-            //var ipAddress = ;
+            string? AddressFamily = HttpContext.Connection.RemoteIpAddress?.AddressFamily.ToString();
+            string? ScopeId = string.Empty;
+            string? IpAddress = string.Empty;
 
-            return new RemoteIp() { ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() };
 
-            //return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            //{
-            //    Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            //    TemperatureC = Random.Shared.Next(-20, 55),
-            //    Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            //})
-            //.ToArray();
+            if (HttpContext.Connection.RemoteIpAddress?.AddressFamily.ToString() == ProtocolFamily.InterNetworkV6.ToString())
+            {
+                ScopeId = HttpContext.Connection.RemoteIpAddress.ScopeId.ToString();
+                IpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv6().ToString();
+            }
+            else
+            {
+                IpAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+            }
+
+            return new RemoteIp() { IpAddress = IpAddress, AddressFamily = AddressFamily, ScopeId = ScopeId };
         }
     }
 }

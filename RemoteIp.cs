@@ -2,11 +2,11 @@ namespace IPService
 {
     public class RemoteIp
     {
-        public string? ipAddress { get; set; }
+        public string? IpAddress { get; set; }
 
-        //public int TemperatureC { get; set; }
+        public string? AddressFamily { get; set; }
 
-        //public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        public string? ScopeId { get; set; }
 
         //public string? Summary { get; set; }
     }
