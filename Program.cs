@@ -30,8 +30,8 @@ namespace IPService
             builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
             builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
-
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            builder.Services.AddSingleton<IpDatabaseService>();
 
             var app = builder.Build();
 
@@ -47,7 +47,6 @@ namespace IPService
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
