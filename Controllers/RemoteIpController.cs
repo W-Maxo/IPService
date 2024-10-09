@@ -29,14 +29,14 @@ namespace IPService.Controllers
 
                 if (HttpContext.Connection.RemoteIpAddress.IsIPv4MappedToIPv6)
                 {
-                    ScopeId = HttpContext.Connection.RemoteIpAddress.ScopeId.ToString();
-                    IpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv6().ToString();
-                    AddressFamily = "IPv6";
+                    IpAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+                    AddressFamily = "IPv4";
                 }
                 else
                 {
-                    IpAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
-                    AddressFamily = "IPv4";
+                    ScopeId = HttpContext.Connection.RemoteIpAddress.ScopeId.ToString();
+                    IpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv6().ToString();
+                    AddressFamily = "IPv6";
                 }
 
                 return new RemoteIp() { IpAddress = IpAddress, AddressFamily = AddressFamily, ScopeId = ScopeId };
