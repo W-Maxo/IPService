@@ -20,22 +20,32 @@ namespace IPService.Controllers
         //[RateLimit("EndpointRateLimitPolicy")]
         public RemoteIp? Get(IPAddress? remoteIpAddress)
         {
-            string? AddressFamily = HttpContext.Connection.RemoteIpAddress?.AddressFamily.ToString();
+            string? AddressFamily = string.Empty;
             string? ScopeId = string.Empty;
             string? IpAddress = string.Empty;
 
-
-            if (HttpContext.Connection.RemoteIpAddress?.AddressFamily.ToString() == ProtocolFamily.InterNetworkV6.ToString())
+            if (HttpContext.Connection.RemoteIpAddress != null)
             {
-                ScopeId = HttpContext.Connection.RemoteIpAddress.ScopeId.ToString();
-                IpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv6().ToString();
+
+                if (HttpContext.Connection.RemoteIpAddress.IsIPv4MappedToIPv6)
+                {
+                    ScopeId = HttpContext.Connection.RemoteIpAddress.ScopeId.ToString();
+                    IpAddress = HttpContext.Connection.RemoteIpAddress.MapToIPv6().ToString();
+                    AddressFamily = "IPv6";
+                }
+                else
+                {
+                    IpAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+                    AddressFamily = "IPv4";
+                }
+
+                return new RemoteIp() { IpAddress = IpAddress, AddressFamily = AddressFamily, ScopeId = ScopeId };
             }
             else
             {
-                IpAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+                return null;
             }
 
-            return new RemoteIp() { IpAddress = IpAddress, AddressFamily = AddressFamily, ScopeId = ScopeId };
         }
     }
 }
