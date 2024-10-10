@@ -18,7 +18,7 @@ public class RemoteIpInfoController : ControllerBase
 
     [HttpGet(Name = "GetRemoteIpAddressInfo")]
     //[RateLimit("EndpointRateLimitPolicy")]
-    public RemoteIpInfo? Get(IPAddress? remoteIpAddress)
+    public RemoteIpInfo? Get()
     {
         string? AddressFamily = string.Empty;
         string? ScopeId = string.Empty;
@@ -39,11 +39,13 @@ public class RemoteIpInfoController : ControllerBase
                 AddressFamily = "IPv6";
             }
 
-            _ipDatabaseService.GetIpInfo();
+            var  res = _ipDatabaseService.GetIpInfo(IpAddress);
 
-            return new RemoteIpInfo() { IpAddress = IpAddress, AddressFamily = AddressFamily, ScopeId = ScopeId };
+            res.ScopeId = ScopeId;
+            res.AddressFamily = AddressFamily;
+            res.IpAddress = IpAddress;
 
-            //, cityResponse = _ipDatabaseService.GetIpInfo()
+            return res;
         }
         else
         {
